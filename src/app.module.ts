@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './controllers/app.controller';
-import { AppService } from './services/app.service';
+import { ProductController } from './product/dto/products-controller';
+import { ProductService } from './product/products-service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dataSourceOptions } from './db/data-source';
+import { Product } from './entity/Product';
+import { Category } from './entity/Category';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forFeature([Product, Category]),
+  ],
+  controllers: [ProductController],
+  providers: [ProductService],
 })
 export class AppModule {}

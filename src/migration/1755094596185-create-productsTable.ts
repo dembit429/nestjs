@@ -1,16 +1,16 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class CreateProductsTable1755094425892 implements MigrationInterface {
+export class CreateProductsTable1755094596185 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             CREATE TABLE "product" (
-                "id" SERIAL NOT NULL,
+                "id" UUID NOT NULL DEFAULT gen_random_uuid(),
                 "brand" character varying(50) NOT NULL,
                 "model" character varying(50) NOT NULL,
                 "price" integer NOT NULL,
                 "created_at" date NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                "categoryId" integer NOT NULL,
+                "categoryId" UUID NOT NULL,
                 CONSTRAINT "PK_1234567890abcdef1234567890abcdef" PRIMARY KEY ("id")
             )
         `);
