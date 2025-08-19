@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../entity/Product';
 import { CreateProductDto } from './dto/create-product-dto';
+import { ProductResponseDto } from './dto/response-product-dto';
 
 @Injectable()
 export class ProductService {
@@ -11,7 +12,7 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  getProducts(): Promise<Product[]> {
+  getProducts(): Promise<ProductResponseDto[]> {
     return this.productRepository.find();
   }
 
