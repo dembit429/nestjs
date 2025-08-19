@@ -1,6 +1,7 @@
 import type { UUID } from 'crypto';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -19,7 +20,7 @@ export class Category {
   })
   watch_type: string;
 
-  @Column({
+  @CreateDateColumn({
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
@@ -32,6 +33,6 @@ export class Category {
   })
   updated_at: Date;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category_id)
   products: Product[];
 }

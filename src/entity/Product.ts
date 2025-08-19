@@ -6,6 +6,8 @@ import {
   Column,
   ManyToOne,
   UpdateDateColumn,
+  CreateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -30,8 +32,8 @@ export class Product {
   })
   price: number;
 
-  @Column({
-    type: 'date',
+  @CreateDateColumn({
+    type: 'timestamp',
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
   })
@@ -44,9 +46,13 @@ export class Product {
   })
   updated_at: Date;
 
+  @Column({ type: 'uuid', nullable: false })
+  category_id: UUID;
+
   @ManyToOne(() => Category, (category) => category.products, {
     nullable: false,
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 }

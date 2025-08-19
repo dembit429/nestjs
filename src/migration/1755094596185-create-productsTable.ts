@@ -24,7 +24,7 @@ export class CreateProductsTable1755094596185 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             ALTER TABLE "product"
-            DROP CONSTRAINT "FK_1234567890abcdef1234567890abcdef"
+            DROP CONSTRAINT IF EXISTS "FK_1234567890abcdef1234567890abcdef"
         `);
 
     await queryRunner.query(`
