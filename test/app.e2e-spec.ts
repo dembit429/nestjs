@@ -20,9 +20,7 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/')
-      .expect(200);
+    const response = await request(app.getHttpServer()).get('/').expect(200);
 
     expect(Array.isArray(response.body)).toBe(true);
     expect(response.body).toEqual(expect.any(Array));

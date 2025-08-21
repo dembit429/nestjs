@@ -6,7 +6,7 @@ import { dataSourceOptions } from './db/data-source';
 import { Product } from './entity/Product';
 import { Category } from './entity/Category';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver,ApolloDriverConfig  } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
 @Module({
@@ -22,4 +22,3 @@ import { join } from 'path';
   providers: [ProductService, ProductResolver],
 })
 export class AppModule {}
-

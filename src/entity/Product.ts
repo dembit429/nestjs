@@ -9,7 +9,7 @@ import {
   CreateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { ObjectType,Field,ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType()
 @Entity()
