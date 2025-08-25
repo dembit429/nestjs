@@ -48,4 +48,30 @@ export class CategoryService {
       throw error;
     }
   }
+
+  async deleteCategory(id: UUID): Promise<boolean> {
+    try {
+      const result = await this.categoryRepository.delete(id);
+      return result.affected > 0;
+    } catch (error) {
+      console.error(`Error deleting category with id ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async updateCategory(id: UUID, category: CreateCategoryDto): Promise<boolean> {
+    try {
+      const existingCategory = await this.categoryRepository.findOne({
+        where: { id },
+      });
+      if (!existingCategory) {
+        throw new Error('Category not found');
+      }
+      await this.categoryRepository.update(id, category);
+      return true;
+    } catch (error) {
+      console.error(`Error updating category with id ${id}:`, error);
+      throw error;
+    }
+  }
 }

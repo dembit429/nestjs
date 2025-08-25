@@ -25,4 +25,17 @@ export class CategoryResolver {
   ): Promise<CategoryResponseDto> {
     return this.categoryService.createCategory(category);
   }
+
+  @Mutation(() => Boolean)
+  async deleteCategory(@Args('id') id: UUID): Promise<boolean> {
+    return this.categoryService.deleteCategory(id);
+  }
+
+  @Mutation(() => Boolean)
+  async updateCategory(
+    @Args('id') id: UUID,
+    @Args('input') category: CreateCategoryDto,
+  ): Promise<boolean> {
+    return this.categoryService.updateCategory(id, category);
+  }
 }

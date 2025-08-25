@@ -28,7 +28,9 @@ scalar DateTime
 type Mutation {
   createCategory(input: CreateCategoryDto!): Category!
   createProduct(input: CreateProductDto!): Product!
+  deleteCategory(id: String!): Boolean!
   deleteProduct(id: String!): Boolean!
+  updateCategory(id: String!, input: CreateCategoryDto!): Boolean!
   updateProduct(id: String!, input: CreateProductDto!): Boolean!
 }
 
