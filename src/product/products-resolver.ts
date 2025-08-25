@@ -16,7 +16,11 @@ export class ProductResolver {
 
   @Query(() => Product, { nullable: true })
   async getProductById(@Args('id') id: UUID): Promise<ProductResponseDto> {
-    return this.productService.getProductById(id);
+    try {
+      return this.productService.getProductById(id);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Mutation(() => Product)

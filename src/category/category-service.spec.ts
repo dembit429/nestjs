@@ -45,6 +45,7 @@ describe('CategoryService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
@@ -75,7 +76,9 @@ describe('CategoryService', () => {
       const error = new Error('Database connection failed');
       mockRepository.find.mockRejectedValue(error);
 
-      await expect(service.getCategories()).rejects.toThrow('Database connection failed');
+      await expect(service.getCategories()).rejects.toThrow(
+        'Database connection failed',
+      );
       expect(repository.find).toHaveBeenCalledTimes(1);
     });
   });
@@ -88,7 +91,9 @@ describe('CategoryService', () => {
 
       const result = await service.getCategoryById(categoryId);
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: categoryId } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: categoryId },
+      });
       expect(result).toEqual(mockCategoryResponse);
     });
 
@@ -97,7 +102,9 @@ describe('CategoryService', () => {
 
       const result = await service.getCategoryById(categoryId);
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: categoryId } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: categoryId },
+      });
       expect(result).toBeNull();
     });
 
@@ -105,44 +112,93 @@ describe('CategoryService', () => {
       const error = new Error('Database query failed');
       mockRepository.findOne.mockRejectedValue(error);
 
-      await expect(service.getCategoryById(categoryId)).rejects.toThrow('Database query failed');
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: categoryId } });
+      await expect(service.getCategoryById(categoryId)).rejects.toThrow(
+        'Database query failed',
+      );
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: categoryId },
+      });
     });
   });
 
   describe('createCategory', () => {
+    beforeEach(() => {
+      // Reset all mocks before each test
+      jest.clearAllMocks();
+      jest.resetAllMocks();
+    });
+
     it('should create and save a new category', async () => {
-      const createdCategory = { ...mockCreateCategoryDto, id: mockCategoryResponse.id };
-      
+      const createdCategory = {
+        ...mockCreateCategoryDto,
+        id: mockCategoryResponse.id,
+      };
+
+      mockRepository.findOne.mockImplementation(() => Promise.resolve(null)); // No existing category
       mockRepository.create.mockReturnValue(createdCategory);
-      mockRepository.save.mockResolvedValue(mockCategoryResponse);
+      mockRepository.save.mockImplementation(() =>
+        Promise.resolve(mockCategoryResponse),
+      );
 
       const result = await service.createCategory(mockCreateCategoryDto);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { watch_type: mockCreateCategoryDto.watch_type },
+      });
       expect(repository.create).toHaveBeenCalledWith(mockCreateCategoryDto);
       expect(repository.save).toHaveBeenCalledWith(createdCategory);
       expect(result).toEqual(mockCategoryResponse);
     });
 
+    it('should throw error when category with same watch_type already exists', async () => {
+      mockRepository.findOne.mockImplementation(() =>
+        Promise.resolve(mockCategoryResponse),
+      ); // Existing category
+
+      await expect(
+        service.createCategory(mockCreateCategoryDto),
+      ).rejects.toThrow('Category with this type already exists');
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { watch_type: mockCreateCategoryDto.watch_type },
+      });
+      expect(repository.create).not.toHaveBeenCalled();
+      expect(repository.save).not.toHaveBeenCalled();
+    });
+
     it('should handle creation errors', async () => {
       const error = new Error('Failed to create category');
+      mockRepository.findOne.mockImplementation(() => Promise.resolve(null)); // No existing category
       mockRepository.create.mockReturnValue(mockCreateCategoryDto);
-      mockRepository.save.mockRejectedValue(error);
+      mockRepository.save.mockImplementation(() => Promise.reject(error));
 
-      await expect(service.createCategory(mockCreateCategoryDto)).rejects.toThrow('Failed to create category');
+      await expect(
+        service.createCategory(mockCreateCategoryDto),
+      ).rejects.toThrow('Failed to create category');
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { watch_type: mockCreateCategoryDto.watch_type },
+      });
       expect(repository.create).toHaveBeenCalledWith(mockCreateCategoryDto);
       expect(repository.save).toHaveBeenCalledWith(mockCreateCategoryDto);
     });
 
     it('should create category with different watch types', async () => {
       const analogWatch: CreateCategoryDto = { watch_type: 'Analog' };
-      const expectedResponse = { ...mockCategoryResponse, watch_type: 'Analog' };
-      
+      const expectedResponse = {
+        ...mockCategoryResponse,
+        watch_type: 'Analog',
+      };
+
+      mockRepository.findOne.mockImplementation(() => Promise.resolve(null)); // No existing category
       mockRepository.create.mockReturnValue(analogWatch);
-      mockRepository.save.mockResolvedValue(expectedResponse);
+      mockRepository.save.mockImplementation(() =>
+        Promise.resolve(expectedResponse),
+      );
 
       const result = await service.createCategory(analogWatch);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { watch_type: analogWatch.watch_type },
+      });
       expect(repository.create).toHaveBeenCalledWith(analogWatch);
       expect(repository.save).toHaveBeenCalledWith(analogWatch);
       expect(result).toEqual(expectedResponse);

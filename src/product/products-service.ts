@@ -13,16 +13,37 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  getProducts(): Promise<ProductResponseDto[]> {
-    return this.productRepository.find();
+  async getProducts(): Promise<ProductResponseDto[]> {
+    try {
+      return this.productRepository.find();
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw error;
+    }
   }
 
-  getProductById(id: UUID): Promise<ProductResponseDto> {
-    return this.productRepository.findOne({ where: { id } });
+  async getProductById(id: UUID): Promise<ProductResponseDto> {
+    try {
+      return this.productRepository.findOne({ where: { id } });
+    } catch (error) {
+      console.error(`Error fetching product with id ${id}:`, error);
+      throw error;
+    }
   }
 
-  createProduct(product: CreateProductDto): Promise<Product> {
-    const newProduct = this.productRepository.create(product);
-    return this.productRepository.save(newProduct);
+  async createProduct(product: CreateProductDto): Promise<Product> {
+    try {
+      const existingProduct = await this.productRepository.findOne({
+        where: { brand: product.brand, model: product.model },
+      });
+      if (existingProduct) {
+        throw new Error('Product with this name already exists');
+      }
+      const newProduct = this.productRepository.create(product);
+      return this.productRepository.save(newProduct);
+    } catch (error) {
+      console.error('Error creating product:', error);
+      throw error;
+    }
   }
 }

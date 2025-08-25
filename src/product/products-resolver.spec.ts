@@ -139,7 +139,9 @@ describe('ProductResolver', () => {
       const error = new Error('Product not found');
       mockProductService.getProductById.mockRejectedValue(error);
 
-      await expect(resolver.getProductById(productId)).rejects.toThrow('Product not found');
+      await expect(resolver.getProductById(productId)).rejects.toThrow(
+        'Product not found',
+      );
       expect(service.getProductById).toHaveBeenCalledWith(productId);
     });
 
@@ -174,7 +176,9 @@ describe('ProductResolver', () => {
       const error = new Error('Failed to create product');
       mockProductService.createProduct.mockRejectedValue(error);
 
-      await expect(resolver.createProduct(mockCreateProductDto)).rejects.toThrow('Failed to create product');
+      await expect(
+        resolver.createProduct(mockCreateProductDto),
+      ).rejects.toThrow('Failed to create product');
       expect(service.createProduct).toHaveBeenCalledWith(mockCreateProductDto);
     });
 
@@ -203,14 +207,14 @@ describe('ProductResolver', () => {
       const expensiveWatch: CreateProductDto = {
         brand: 'Rolex',
         model: 'Submariner',
-        price: 8100.50,
+        price: 8100.5,
         category_id: '456e7890-e89b-12d3-a456-426614174111' as any,
       };
       const expectedProduct = {
         ...mockProduct,
         brand: 'Rolex',
         model: 'Submariner',
-        price: 8100.50,
+        price: 8100.5,
       };
       mockProductService.createProduct.mockResolvedValue(expectedProduct);
 
@@ -238,7 +242,9 @@ describe('ProductResolver', () => {
 
       const result = await resolver.createProduct(watchWithDifferentCategory);
 
-      expect(service.createProduct).toHaveBeenCalledWith(watchWithDifferentCategory);
+      expect(service.createProduct).toHaveBeenCalledWith(
+        watchWithDifferentCategory,
+      );
       expect(result).toEqual(expectedProduct);
     });
   });

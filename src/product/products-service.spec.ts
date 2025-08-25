@@ -61,6 +61,7 @@ describe('ProductService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {
@@ -91,7 +92,9 @@ describe('ProductService', () => {
       const error = new Error('Database connection failed');
       mockRepository.find.mockRejectedValue(error);
 
-      await expect(service.getProducts()).rejects.toThrow('Database connection failed');
+      await expect(service.getProducts()).rejects.toThrow(
+        'Database connection failed',
+      );
       expect(repository.find).toHaveBeenCalledTimes(1);
     });
   });
@@ -104,7 +107,9 @@ describe('ProductService', () => {
 
       const result = await service.getProductById(productId);
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: productId } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: productId },
+      });
       expect(result).toEqual(mockProductResponse);
     });
 
@@ -113,7 +118,9 @@ describe('ProductService', () => {
 
       const result = await service.getProductById(productId);
 
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: productId } });
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: productId },
+      });
       expect(result).toBeNull();
     });
 
@@ -121,31 +128,67 @@ describe('ProductService', () => {
       const error = new Error('Database query failed');
       mockRepository.findOne.mockRejectedValue(error);
 
-      await expect(service.getProductById(productId)).rejects.toThrow('Database query failed');
-      expect(repository.findOne).toHaveBeenCalledWith({ where: { id: productId } });
+      await expect(service.getProductById(productId)).rejects.toThrow(
+        'Database query failed',
+      );
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { id: productId },
+      });
     });
   });
 
   describe('createProduct', () => {
     it('should create and save a new product', async () => {
       const createdProduct = { ...mockCreateProductDto, id: mockProduct.id };
-      
+
+      mockRepository.findOne.mockResolvedValue(null); // No existing product
       mockRepository.create.mockReturnValue(createdProduct);
       mockRepository.save.mockResolvedValue(mockProduct);
 
       const result = await service.createProduct(mockCreateProductDto);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: {
+          brand: mockCreateProductDto.brand,
+          model: mockCreateProductDto.model,
+        },
+      });
       expect(repository.create).toHaveBeenCalledWith(mockCreateProductDto);
       expect(repository.save).toHaveBeenCalledWith(createdProduct);
       expect(result).toEqual(mockProduct);
     });
 
+    it('should throw error when product with same brand and model already exists', async () => {
+      mockRepository.findOne.mockResolvedValue(mockProduct); // Existing product
+
+      await expect(service.createProduct(mockCreateProductDto)).rejects.toThrow(
+        'Product with this name already exists',
+      );
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: {
+          brand: mockCreateProductDto.brand,
+          model: mockCreateProductDto.model,
+        },
+      });
+      expect(repository.create).not.toHaveBeenCalled();
+      expect(repository.save).not.toHaveBeenCalled();
+    });
+
     it('should handle creation errors', async () => {
       const error = new Error('Failed to create product');
+      mockRepository.findOne.mockResolvedValue(null); // No existing product
       mockRepository.create.mockReturnValue(mockCreateProductDto);
       mockRepository.save.mockRejectedValue(error);
 
-      await expect(service.createProduct(mockCreateProductDto)).rejects.toThrow('Failed to create product');
+      await expect(service.createProduct(mockCreateProductDto)).rejects.toThrow(
+        'Failed to create product',
+      );
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: {
+          brand: mockCreateProductDto.brand,
+          model: mockCreateProductDto.model,
+        },
+      });
       expect(repository.create).toHaveBeenCalledWith(mockCreateProductDto);
       expect(repository.save).toHaveBeenCalledWith(mockCreateProductDto);
     });
@@ -157,18 +200,22 @@ describe('ProductService', () => {
         price: 299.99,
         category_id: '456e7890-e89b-12d3-a456-426614174111' as any,
       };
-      const expectedProduct = { 
-        ...mockProduct, 
-        brand: 'Samsung', 
+      const expectedProduct = {
+        ...mockProduct,
+        brand: 'Samsung',
         model: 'Galaxy Watch 6',
-        price: 299.99 
+        price: 299.99,
       };
-      
+
+      mockRepository.findOne.mockResolvedValue(null); // No existing product
       mockRepository.create.mockReturnValue(samsungWatch);
       mockRepository.save.mockResolvedValue(expectedProduct);
 
       const result = await service.createProduct(samsungWatch);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { brand: samsungWatch.brand, model: samsungWatch.model },
+      });
       expect(repository.create).toHaveBeenCalledWith(samsungWatch);
       expect(repository.save).toHaveBeenCalledWith(samsungWatch);
       expect(result).toEqual(expectedProduct);
@@ -178,21 +225,25 @@ describe('ProductService', () => {
       const expensiveWatch: CreateProductDto = {
         brand: 'Rolex',
         model: 'Submariner',
-        price: 8100.50,
+        price: 8100.5,
         category_id: '456e7890-e89b-12d3-a456-426614174111' as any,
       };
-      const expectedProduct = { 
-        ...mockProduct, 
-        brand: 'Rolex', 
+      const expectedProduct = {
+        ...mockProduct,
+        brand: 'Rolex',
         model: 'Submariner',
-        price: 8100.50 
+        price: 8100.5,
       };
-      
+
+      mockRepository.findOne.mockResolvedValue(null); // No existing product
       mockRepository.create.mockReturnValue(expensiveWatch);
       mockRepository.save.mockResolvedValue(expectedProduct);
 
       const result = await service.createProduct(expensiveWatch);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { brand: expensiveWatch.brand, model: expensiveWatch.model },
+      });
       expect(repository.create).toHaveBeenCalledWith(expensiveWatch);
       expect(repository.save).toHaveBeenCalledWith(expensiveWatch);
       expect(result).toEqual(expectedProduct);
@@ -205,19 +256,23 @@ describe('ProductService', () => {
         price: 699.99,
         category_id: '789e0123-e89b-12d3-a456-426614174222' as any,
       };
-      const expectedProduct = { 
-        ...mockProduct, 
-        brand: 'Garmin', 
+      const expectedProduct = {
+        ...mockProduct,
+        brand: 'Garmin',
         model: 'Fenix 7',
         price: 699.99,
-        category_id: '789e0123-e89b-12d3-a456-426614174222' as any
+        category_id: '789e0123-e89b-12d3-a456-426614174222' as any,
       };
-      
+
+      mockRepository.findOne.mockResolvedValue(null); // No existing product
       mockRepository.create.mockReturnValue(smartwatchDto);
       mockRepository.save.mockResolvedValue(expectedProduct);
 
       const result = await service.createProduct(smartwatchDto);
 
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: { brand: smartwatchDto.brand, model: smartwatchDto.model },
+      });
       expect(repository.create).toHaveBeenCalledWith(smartwatchDto);
       expect(repository.save).toHaveBeenCalledWith(smartwatchDto);
       expect(result).toEqual(expectedProduct);

@@ -112,7 +112,9 @@ describe('CategoryResolver', () => {
     const categoryId = '123e4567-e89b-12d3-a456-426614174000' as any;
 
     it('should return a category when found', async () => {
-      mockCategoryService.getCategoryById.mockResolvedValue(mockCategoryResponse);
+      mockCategoryService.getCategoryById.mockResolvedValue(
+        mockCategoryResponse,
+      );
 
       const result = await resolver.getCategoryById(categoryId);
 
@@ -133,7 +135,9 @@ describe('CategoryResolver', () => {
       const error = new Error('Category not found');
       mockCategoryService.getCategoryById.mockRejectedValue(error);
 
-      await expect(resolver.getCategoryById(categoryId)).rejects.toThrow('Category not found');
+      await expect(resolver.getCategoryById(categoryId)).rejects.toThrow(
+        'Category not found',
+      );
       expect(service.getCategoryById).toHaveBeenCalledWith(categoryId);
     });
 
@@ -155,11 +159,15 @@ describe('CategoryResolver', () => {
 
   describe('createCategory', () => {
     it('should create and return a new category', async () => {
-      mockCategoryService.createCategory.mockResolvedValue(mockCategoryResponse);
+      mockCategoryService.createCategory.mockResolvedValue(
+        mockCategoryResponse,
+      );
 
       const result = await resolver.createCategory(mockCreateCategoryDto);
 
-      expect(service.createCategory).toHaveBeenCalledWith(mockCreateCategoryDto);
+      expect(service.createCategory).toHaveBeenCalledWith(
+        mockCreateCategoryDto,
+      );
       expect(result).toEqual(mockCategoryResponse);
     });
 
@@ -167,8 +175,12 @@ describe('CategoryResolver', () => {
       const error = new Error('Failed to create category');
       mockCategoryService.createCategory.mockRejectedValue(error);
 
-      await expect(resolver.createCategory(mockCreateCategoryDto)).rejects.toThrow('Failed to create category');
-      expect(service.createCategory).toHaveBeenCalledWith(mockCreateCategoryDto);
+      await expect(
+        resolver.createCategory(mockCreateCategoryDto),
+      ).rejects.toThrow('Failed to create category');
+      expect(service.createCategory).toHaveBeenCalledWith(
+        mockCreateCategoryDto,
+      );
     });
 
     it('should create category with different watch types', async () => {
