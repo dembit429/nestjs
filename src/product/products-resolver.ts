@@ -29,4 +29,17 @@ export class ProductResolver {
   ): Promise<Product> {
     return this.productService.createProduct(product);
   }
+
+  @Mutation(() => Boolean)
+  async deleteProduct(@Args('id') id: UUID): Promise<boolean> {
+    return this.productService.deleteProduct(id);
+  }
+
+  @Mutation(() => Boolean)
+  async updateProduct(
+    @Args('id') id: UUID,
+    @Args('input') product: CreateProductDto,
+  ): Promise<boolean> {
+    return this.productService.updateProduct(id, product);
+  }
 }

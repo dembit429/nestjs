@@ -46,4 +46,30 @@ export class ProductService {
       throw error;
     }
   }
+
+  async deleteProduct(id: UUID): Promise<boolean> {
+    try {
+      const result = await this.productRepository.delete(id);
+      return result.affected > 0;
+    } catch (error) {
+      console.error(`Error deleting product with id ${id}:`, error);
+      throw error;
+    }
+  }
+
+  async updateProduct(id: UUID, product: CreateProductDto): Promise<boolean> {
+    try {
+      const existingProduct = await this.productRepository.findOne({
+        where: { id },
+      });
+      if (!existingProduct) {
+        throw new Error('Product not found');
+      }
+      await this.productRepository.update(id, product);
+      return true;
+    } catch (error) {
+      console.error(`Error updating product with id ${id}:`, error);
+      throw error;
+    }
+  }
 }
