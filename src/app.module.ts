@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ProductResolver } from './product/products-resolver';
-import { ProductService } from './product/products-service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './db/data-source';
-import { Product } from './entity/Product';
-import { Category } from './entity/Category';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
+import { CategoryModule } from './category/category-module';
+import { ProductsModule } from './product/product-module';
 
 @Module({
   imports: [
@@ -17,8 +15,9 @@ import { join } from 'path';
       sortSchema: true,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
-    TypeOrmModule.forFeature([Product, Category]),
+    CategoryModule,
+    ProductsModule,
   ],
-  providers: [ProductService, ProductResolver],
+  providers: [],
 })
 export class AppModule {}

@@ -3,6 +3,7 @@ import { ProductService } from './products-service';
 import { Product } from '../entity/Product';
 import { ProductResponseDto } from './dto/response-product-dto';
 import { CreateProductDto } from './dto/create-product-dto';
+import { UUID } from 'crypto';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -11,6 +12,11 @@ export class ProductResolver {
   @Query(() => [Product])
   async getProducts(): Promise<ProductResponseDto[]> {
     return this.productService.getProducts();
+  }
+
+  @Query(() => Product, { nullable: true })
+  async getProductById(@Args('id') id: UUID): Promise<ProductResponseDto> {
+    return this.productService.getProductById(id);
   }
 
   @Mutation(() => Product)

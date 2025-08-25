@@ -2,6 +2,17 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Category {
+  created_at: DateTime!
+  id: ID!
+  updated_at: DateTime!
+  watch_type: String!
+}
+
+input CreateCategoryDto {
+  watch_type: String!
+}
+
 input CreateProductDto {
   brand: String!
   category_id: ID!
@@ -15,6 +26,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
+  createCategory(input: CreateCategoryDto!): Category!
   createProduct(input: CreateProductDto!): Product!
 }
 
@@ -29,5 +41,8 @@ type Product {
 }
 
 type Query {
+  getCategories: [Category!]!
+  getCategoryById(id: String!): Category
+  getProductById(id: String!): Product
   getProducts: [Product!]!
 }
