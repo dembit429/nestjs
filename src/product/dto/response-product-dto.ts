@@ -5,7 +5,7 @@ export interface ProductResponseDto {
   brand: string;
   model: string;
   price: number;
-  category_id: any;
+  category_id: UUID;
   created_at: Date;
   updated_at: Date;
 }

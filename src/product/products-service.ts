@@ -5,7 +5,7 @@ import { Product } from '../entity/Product';
 import { CreateProductDto } from './dto/create-product-dto';
 import { ProductResponseDto } from './dto/response-product-dto';
 import { UUID } from 'crypto';
-import {NotFoundException} from "@nestjs/common"
+import { NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dto/update-product-dto';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class ProductService {
 
   async getProductById(id: UUID): Promise<ProductResponseDto> {
     try {
-      const product = this.productRepository.findOne({ where: { id } });
+      const product = await this.productRepository.findOne({ where: { id } });
       if (!product) {
         throw new NotFoundException('Product not found');
       }

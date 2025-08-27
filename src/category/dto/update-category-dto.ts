@@ -1,9 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class UpdateCategoryDto {
-  @Field({})
+  @Field()
   @IsString()
   @IsNotEmpty()
   watch_type: string;
