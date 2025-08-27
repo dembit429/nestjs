@@ -5,6 +5,7 @@ import { ProductResponseDto } from './dto/response-product-dto';
 import { CreateProductDto } from './dto/create-product-dto';
 import { UUID } from 'crypto';
 import { UpdateProductDto } from './dto/update-product-dto';
+import { ParseUUIDPipe } from '@nestjs/common';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -12,15 +13,13 @@ export class ProductResolver {
 
   @Query(() => [Product])
   async getProducts(): Promise<ProductResponseDto[]> {
-    try {
-      return this.productService.getProducts();
-    } catch (error) {
-      throw error;
-    }
+    return this.productService.getProducts();
   }
 
   @Query(() => Product, { nullable: true })
-  async getProductById(@Args('id') id: UUID): Promise<ProductResponseDto> {
+  async getProductById(
+    @Args('id', ParseUUIDPipe) id: UUID,
+  ): Promise<ProductResponseDto> {
     try {
       return this.productService.getProductById(id);
     } catch (error) {
@@ -32,31 +31,19 @@ export class ProductResolver {
   async createProduct(
     @Args('input') product: CreateProductDto,
   ): Promise<Product> {
-    try {
-      return this.productService.createProduct(product);
-    } catch (error) {
-      throw error;
-    }
+    return this.productService.createProduct(product);
   }
 
   @Mutation(() => Boolean)
-  async deleteProduct(@Args('id') id: UUID): Promise<boolean> {
-    try {
-      return this.productService.deleteProduct(id);
-    } catch (error) {
-      throw error;
-    }
+  async deleteProduct(@Args('id', ParseUUIDPipe) id: UUID): Promise<boolean> {
+    return this.productService.deleteProduct(id);
   }
 
   @Mutation(() => Boolean)
   async updateProduct(
-    @Args('id') id: UUID,
+    @Args('id', ParseUUIDPipe) id: UUID,
     @Args('input') product: UpdateProductDto,
   ): Promise<boolean> {
-    try {
-      return this.productService.updateProduct(id, product);
-    } catch (error) {
-      throw error;
-    }
+    return this.productService.updateProduct(id, product);
   }
 }

@@ -12,16 +12,20 @@ import { UUID } from 'crypto';
 export class UpdateProductDto {
   @Field({ nullable: true })
   @IsString()
+  @IsOptional()
   brand?: string;
 
+  @IsOptional()
   @Field({ nullable: true })
   @IsString()
   model?: string;
 
+  @IsOptional()
   @Field(() => Float, { nullable: true })
   @IsNumber()
   price?: number;
 
+  @IsOptional()
   @Field(() => ID, { nullable: true })
   @IsUUID()
   category_id?: UUID;

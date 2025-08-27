@@ -5,6 +5,7 @@ import { CategoryService } from './category-service';
 import { CreateCategoryDto } from './dto/create-category-dto';
 import { CategoryResponseDto } from './dto/response-category-dto';
 import { UpdateCategoryDto } from './dto/update-category-dto';
+import { ParseUUIDPipe } from '@nestjs/common';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -16,7 +17,9 @@ export class CategoryResolver {
   }
 
   @Query(() => Category, { nullable: true })
-  async getCategoryById(@Args('id') id: UUID): Promise<CategoryResponseDto> {
+  async getCategoryById(
+    @Args('id', ParseUUIDPipe) id: UUID,
+  ): Promise<CategoryResponseDto> {
     return this.categoryService.getCategoryById(id);
   }
 
@@ -28,13 +31,13 @@ export class CategoryResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteCategory(@Args('id') id: UUID): Promise<boolean> {
+  async deleteCategory(@Args('id', ParseUUIDPipe) id: UUID): Promise<boolean> {
     return this.categoryService.deleteCategory(id);
   }
 
   @Mutation(() => Boolean)
   async updateCategory(
-    @Args('id') id: UUID,
+    @Args('id', ParseUUIDPipe) id: UUID,
     @Args('input') category: UpdateCategoryDto,
   ): Promise<boolean> {
     return this.categoryService.updateCategory(id, category);
