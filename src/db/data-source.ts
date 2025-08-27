@@ -15,7 +15,8 @@ export const dataSourceOptions: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: true,
-  logging: false,
+  logging: true,
+  logger: 'advanced-console',
   entities: [Product, Category],
   migrations: [
     CreateCategoryTable1755094396184,

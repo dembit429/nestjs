@@ -5,6 +5,7 @@ import { Category } from '../entity/Category';
 import { UUID } from 'crypto';
 import { CreateCategoryDto } from './dto/create-category-dto';
 import { CategoryResponseDto } from './dto/response-category-dto';
+import { UpdateCategoryDto } from './dto/update-category-dto';
 
 @Injectable()
 export class CategoryService {
@@ -59,7 +60,10 @@ export class CategoryService {
     }
   }
 
-  async updateCategory(id: UUID, category: CreateCategoryDto): Promise<boolean> {
+  async updateCategory(
+    id: UUID,
+    category: UpdateCategoryDto,
+  ): Promise<boolean> {
     try {
       const existingCategory = await this.categoryRepository.findOne({
         where: { id },

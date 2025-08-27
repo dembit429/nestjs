@@ -4,6 +4,7 @@ import { Category } from '../entity/Category';
 import { CategoryService } from './category-service';
 import { CreateCategoryDto } from './dto/create-category-dto';
 import { CategoryResponseDto } from './dto/response-category-dto';
+import { UpdateCategoryDto } from './dto/update-category-dto';
 
 @Resolver(() => Category)
 export class CategoryResolver {
@@ -34,7 +35,7 @@ export class CategoryResolver {
   @Mutation(() => Boolean)
   async updateCategory(
     @Args('id') id: UUID,
-    @Args('input') category: CreateCategoryDto,
+    @Args('input') category: UpdateCategoryDto,
   ): Promise<boolean> {
     return this.categoryService.updateCategory(id, category);
   }

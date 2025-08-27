@@ -5,6 +5,8 @@ import { Product } from '../entity/Product';
 import { CreateProductDto } from './dto/create-product-dto';
 import { ProductResponseDto } from './dto/response-product-dto';
 import { UUID } from 'crypto';
+import {NotFoundException} from "@nestjs/common"
+import { UpdateProductDto } from './dto/update-product-dto';
 
 @Injectable()
 export class ProductService {
@@ -24,7 +26,11 @@ export class ProductService {
 
   async getProductById(id: UUID): Promise<ProductResponseDto> {
     try {
-      return this.productRepository.findOne({ where: { id } });
+      const product = this.productRepository.findOne({ where: { id } });
+      if (!product) {
+        throw new NotFoundException('Product not found');
+      }
+      return product;
     } catch (error) {
       console.error(`Error fetching product with id ${id}:`, error);
       throw error;
@@ -36,9 +42,11 @@ export class ProductService {
       const existingProduct = await this.productRepository.findOne({
         where: { brand: product.brand, model: product.model },
       });
+
       if (existingProduct) {
         throw new Error('Product with this name already exists');
       }
+
       const newProduct = this.productRepository.create(product);
       return this.productRepository.save(newProduct);
     } catch (error) {
@@ -57,7 +65,7 @@ export class ProductService {
     }
   }
 
-  async updateProduct(id: UUID, product: CreateProductDto): Promise<boolean> {
+  async updateProduct(id: UUID, product: UpdateProductDto): Promise<boolean> {
     try {
       const existingProduct = await this.productRepository.findOne({
         where: { id },

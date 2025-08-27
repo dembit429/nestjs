@@ -4,6 +4,7 @@ import { Product } from '../entity/Product';
 import { ProductResponseDto } from './dto/response-product-dto';
 import { CreateProductDto } from './dto/create-product-dto';
 import { UUID } from 'crypto';
+import { UpdateProductDto } from './dto/update-product-dto';
 
 @Resolver(() => Product)
 export class ProductResolver {
@@ -11,7 +12,11 @@ export class ProductResolver {
 
   @Query(() => [Product])
   async getProducts(): Promise<ProductResponseDto[]> {
-    return this.productService.getProducts();
+    try {
+      return this.productService.getProducts();
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Query(() => Product, { nullable: true })
@@ -27,19 +32,31 @@ export class ProductResolver {
   async createProduct(
     @Args('input') product: CreateProductDto,
   ): Promise<Product> {
-    return this.productService.createProduct(product);
+    try {
+      return this.productService.createProduct(product);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Mutation(() => Boolean)
   async deleteProduct(@Args('id') id: UUID): Promise<boolean> {
-    return this.productService.deleteProduct(id);
+    try {
+      return this.productService.deleteProduct(id);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Mutation(() => Boolean)
   async updateProduct(
     @Args('id') id: UUID,
-    @Args('input') product: CreateProductDto,
+    @Args('input') product: UpdateProductDto,
   ): Promise<boolean> {
-    return this.productService.updateProduct(id, product);
+    try {
+      return this.productService.updateProduct(id, product);
+    } catch (error) {
+      throw error;
+    }
   }
 }
