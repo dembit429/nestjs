@@ -1,13 +1,13 @@
 import 'reflect-metadata';
-import { DataSource } from 'typeorm';
+import { DataSource, DataSourceOptions } from 'typeorm';
 import { Product } from '../entity/Product';
 import { Category } from '../entity/Category';
 import { CreateCategoryTable1755094396184 } from '../migration/1755094396184-create-categoryTable';
-import { CreateProductsTable1755094425892 } from '../migration/1755094596185-create-productsTable';
+import { CreateProductsTable1755094596185 } from '../migration/1755094596185-create-productsTable';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const AppDataSource = new DataSource({
+export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: 'localhost',
   port: 5432,
@@ -16,11 +16,14 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: false,
+  logger: 'advanced-console',
   entities: [Product, Category],
   migrations: [
     CreateCategoryTable1755094396184,
-    CreateProductsTable1755094425892,
+    CreateProductsTable1755094596185,
   ],
   subscribers: [],
   migrationsRun: false,
-});
+};
+
+export default new DataSource(dataSourceOptions);
